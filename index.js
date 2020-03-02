@@ -8,6 +8,10 @@ const books = [
   {
     title: "Jurassic Park",
     author: "Michael Crichton"
+  },
+  {
+    title: "Alice in Wonderland",
+    author: "Tom Sawyer"
   }
 ];
 
