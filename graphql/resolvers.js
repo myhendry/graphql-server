@@ -1,20 +1,21 @@
-const books = [
-  {
-    title: "Harry Potter and the Chamber of Secrets",
-    author: "J.K. Rowling"
-  },
-  {
-    title: "Jurassic Park",
-    author: "Michael Crichton"
-  },
-  {
-    title: "Alice in Wonderland",
-    author: "Tom Sawyer"
-  }
-];
-
 module.exports = {
   Query: {
-    books: () => books
+    getBooks: (_, __, { Book }) => {
+      return Book.find({});
+    }
+  },
+  Mutation: {
+    addBook: async (_, data, { Book }) => {
+      try {
+        await Book.create({
+          title: data.title,
+          author: data.author
+        });
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    }
   }
 };

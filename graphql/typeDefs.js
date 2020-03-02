@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server");
+const { gql } = require("apollo-server-express");
 
 module.exports = gql`
   type Book {
@@ -7,6 +7,10 @@ module.exports = gql`
   }
 
   type Query {
-    books: [Book]
+    getBooks: [Book]
+  }
+
+  type Mutation {
+    addBook(title: String, author: String): Boolean!
   }
 `;
