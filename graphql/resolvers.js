@@ -1,5 +1,13 @@
+const books = [
+  { title: "Alice in Wonderland", author: "Bryan Robson" },
+  { title: "Spiderman", author: "Ali Imran" }
+];
+
 module.exports = {
   Query: {
+    findBooks: () => {
+      return books;
+    },
     getBooks: (_, __, { Book }) => {
       return Book.find({});
     }

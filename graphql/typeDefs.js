@@ -7,6 +7,7 @@ module.exports = gql`
   }
 
   type Query {
+    findBooks: [Book]
     getBooks: [Book]
   }
 
