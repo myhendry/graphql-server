@@ -15,14 +15,14 @@ module.exports = {
   Mutation: {
     addBook: async (_, data, { Book }) => {
       try {
-        await Book.create({
+        const book = await Book.create({
           title: data.title,
           author: data.author
         });
-        return true;
+        return book;
       } catch (error) {
         console.log(error);
-        return false;
+        throw error;
       }
     }
   }
