@@ -12,7 +12,7 @@ module.exports = gql`
   }
 
   extend type Query {
-    scrapeWeb1: ImdbPost
+    scrapeWeb1: [ImdbPost]
     scrapeWeb2: [RedditPost]
   }
 `;
