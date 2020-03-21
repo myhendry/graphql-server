@@ -1,6 +1,7 @@
 const { gql } = require("apollo-server-express");
 
 const bookTypeDefs = require("./book");
+const taskTypeDefs = require("./task");
 const userTypeDefs = require("./user");
 const scraperTypeDefs = require("./scraper");
 
@@ -18,4 +19,10 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = [typeDefs, bookTypeDefs, userTypeDefs, scraperTypeDefs];
+module.exports = [
+  typeDefs,
+  bookTypeDefs,
+  taskTypeDefs,
+  userTypeDefs,
+  scraperTypeDefs
+];

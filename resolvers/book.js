@@ -1,3 +1,6 @@
+const { combineResolvers } = require("graphql-resolvers");
+const { isAuthenticated } = require("./middlewares");
+
 const { books } = require("../constants/books.js");
 
 const BOOK_ADDED = "bookAdded";
@@ -15,23 +18,34 @@ module.exports = {
     findBooks: () => {
       return books;
     },
-    getBooks: (_, __, { Book }) => {
-      return Book.find({});
-    }
+    getBooks: combineResolvers(
+      isAuthenticated,
+      async (_, __, { Book, authUser }) => {
+        try {
+          return Book.find({});
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      }
+    )
   },
   Mutation: {
-    addBook: async (_, data, { pubsub, Book }) => {
-      try {
-        const book = await Book.create({
-          title: data.title,
-          author: data.author
-        });
-        pubsub.publish(BOOK_ADDED, { [BOOK_ADDED]: book });
-        return book;
-      } catch (error) {
-        console.log(error);
-        throw error;
+    addBook: combineResolvers(
+      isAuthenticated,
+      async (_, data, { pubsub, Book }) => {
+        try {
+          const book = await Book.create({
+            title: data.title,
+            author: data.author
+          });
+          pubsub.publish(BOOK_ADDED, { [BOOK_ADDED]: book });
+          return book;
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
       }
-    }
+    )
   }
 };

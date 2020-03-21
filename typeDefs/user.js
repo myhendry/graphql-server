@@ -27,7 +27,7 @@ module.exports = gql`
 
   type User {
     id: ID!
-    name: String!
+    name: String
     email: String!
     createdAt: Date!
     updatedAt: Date!

@@ -1,10 +1,20 @@
 const http = require("http");
 const express = require("express");
-const { ApolloServer, PubSub } = require("apollo-server-express");
+const {
+  ApolloServer,
+  PubSub,
+  AuthenticationError
+} = require("apollo-server-express");
+const jwt = require("jsonwebtoken");
+const jwksClient = require("jwks-rsa");
 
 const resolvers = require("./resolvers");
 const typeDefs = require("./typeDefs");
 const Book = require("./models/Book");
+const Task = require("./models/Task");
+const User = require("./models/User");
+const findOrMakeUser = require("./utils/findOrMakeUser");
+
 require("dotenv").config();
 require("./config/db");
 
@@ -12,6 +22,34 @@ const pubsub = new PubSub();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+const client = jwksClient({
+  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+});
+
+function getKey(header, cb) {
+  client.getSigningKey(header.kid, function(err, key) {
+    var signingKey = key.publicKey || key.rsaPublicKey;
+    cb(null, signingKey);
+  });
+}
+
+const options = {
+  audience: process.env.AUTH0_CLIENTID,
+  issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+  algorithms: ["RS256"]
+};
+
+const getUser = token => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, getKey, options, (err, decoded) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(decoded.email);
+    });
+  });
+};
 
 const server = new ApolloServer({
   typeDefs,
@@ -21,25 +59,29 @@ const server = new ApolloServer({
   context: async ({ req, connection }) => {
     if (connection) {
       // check connection for metadata
+      // console.log(connection);
       return {
         ...connection.context,
         pubsub
       };
     } else {
-      // check from req
-      console.log("req ", req);
-      const token = req.headers.authorization || "";
-      console.log("server token", token);
+      try {
+        const token = req.headers.authorization || "";
 
-      return { pubsub, token, Book };
+        if (token) {
+          const authUser = getUser(token);
+          const authenticatedEmail = await authUser;
+          const { id: userId } = await findOrMakeUser(authenticatedEmail);
+          return { pubsub, userId, Book, Task, User };
+        }
+
+        return { pubsub, Book, Task, User };
+      } catch (error) {
+        throw new AuthenticationError("Access Denied! Need to authenticate");
+      }
     }
   }
 });
-
-//Mount a jwt or other authentication middleware that is run before the GraphQL execution
-// app.use(path, jwtCheck);
-
-// server.applyMiddleware({ app, path });
 
 server.applyMiddleware({ app, cors: true });
 
