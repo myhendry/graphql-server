@@ -6,6 +6,8 @@ ObjectId.prototype.valueOf = function() {
   return this.toString();
 };
 
+mongoose.set("debug", true);
+
 mongoose
   .connect(process.env.MONGO_URI, {
     useCreateIndex: true,

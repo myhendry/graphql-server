@@ -7,6 +7,7 @@ const {
 } = require("apollo-server-express");
 const jwt = require("jsonwebtoken");
 const jwksClient = require("jwks-rsa");
+const DataLoader = require("dataloader");
 
 const resolvers = require("./resolvers");
 const typeDefs = require("./typeDefs");
@@ -14,6 +15,7 @@ const Book = require("./models/Book");
 const Task = require("./models/Task");
 const User = require("./models/User");
 const findOrMakeUser = require("./utils/findOrMakeUser");
+const loaders = require("./loaders");
 
 require("dotenv").config();
 require("./config/db");
@@ -72,10 +74,27 @@ const server = new ApolloServer({
           const authUser = getUser(token);
           const authenticatedEmail = await authUser;
           const { id: userId } = await findOrMakeUser(authenticatedEmail);
-          return { pubsub, userId, Book, Task, User };
+          return {
+            loaders: {
+              user: new DataLoader(keys => loaders.user.batchUsers(keys))
+            },
+            pubsub,
+            userId,
+            Book,
+            Task,
+            User
+          };
         }
 
-        return { pubsub, Book, Task, User };
+        return {
+          loaders: {
+            user: new DataLoader(keys => loaders.user.batchUsers(keys))
+          },
+          pubsub,
+          Book,
+          Task,
+          User
+        };
       } catch (error) {
         throw new AuthenticationError("Access Denied! Need to authenticate");
       }

@@ -35,9 +35,10 @@ module.exports = {
     )
   },
   Task: {
-    user: async (parent, __, { User }) => {
+    user: async (parent, __, { User, loaders }) => {
       try {
-        const user = await User.findById(parent.user);
+        // const user = await User.findById(parent.user);
+        const user = await loaders.user.load(parent.user.toString());
         return user;
       } catch (error) {
         console.log(error);
