@@ -23,6 +23,10 @@ require("./config/db");
 const pubsub = new PubSub();
 
 const app = express();
+
+//! Example using Express Middlewares
+// app.use(cors())
+
 const PORT = process.env.PORT || 4000;
 
 const client = jwksClient({

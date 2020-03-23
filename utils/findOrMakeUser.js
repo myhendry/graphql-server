@@ -6,7 +6,8 @@ const findOrMakeUser = async email => {
   if (!user) {
     const newUser = new User({ email });
     const result = await newUser.save();
-    return user;
+    console.log("findOrMakeUser result", result);
+    return result;
   }
 
   return user;
