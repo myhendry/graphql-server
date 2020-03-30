@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@azure/ai-text-analytics": "^1.0.0-preview.3",
     "apollo-server-express": "^2.10.1",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",

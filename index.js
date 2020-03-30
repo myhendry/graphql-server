@@ -75,6 +75,7 @@ const server = new ApolloServer({
         const token = req.headers.authorization || "";
 
         if (token) {
+          console.log("server token", token);
           const authUser = getUser(token);
           const authenticatedEmail = await authUser;
           const { id: userId } = await findOrMakeUser(authenticatedEmail);
