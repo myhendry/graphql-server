@@ -77,7 +77,9 @@ const server = new ApolloServer({
         if (token) {
           console.log("server token", token);
           const authUser = getUser(token);
+          console.log("server authUser", authUser);
           const authenticatedEmail = await authUser;
+          console.log("server auth email ", authenticatedEmail);
           const { id: userId } = await findOrMakeUser(authenticatedEmail);
           return {
             loaders: {
