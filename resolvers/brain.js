@@ -11,7 +11,7 @@ module.exports = {
       const res = await axios.get(
         "https://enigmatic-dusk-86110.herokuapp.com/hello"
       );
-      console.log("res ", res.data);
+      console.log("res: ", res.data);
       return true;
     }
   }
