@@ -6,6 +6,6 @@ module.exports = gql`
     testPyHelloService: String
   }
   extend type Mutation {
-    queryPySentiment(statement: String!): String
+    askPySentiment(statement: String!): String
   }
 `;

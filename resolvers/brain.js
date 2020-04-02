@@ -22,7 +22,7 @@ module.exports = {
     }
   },
   Mutation: {
-    queryPySentiment: async (_, { statement }) => {
+    askPySentiment: async (_, { statement }) => {
       const { data } = await axios.post(
         "https://hendry-python-server.herokuapp.com/brain",
         // "http://localhost:5000/brain",
@@ -33,7 +33,6 @@ module.exports = {
         }
       );
       const res = data.sentiment;
-      console.log("res: ", res);
       return res;
     }
   }
