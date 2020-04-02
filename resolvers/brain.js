@@ -19,8 +19,10 @@ module.exports = {
       );
       const res = data.msg;
       return res;
-    },
-    testPyMicroService: async (_, { statement }) => {
+    }
+  },
+  Mutation: {
+    queryPySentiment: async (_, { statement }) => {
       const { data } = await axios.post(
         "https://hendry-python-server.herokuapp.com/brain",
         // "http://localhost:5000/brain",
