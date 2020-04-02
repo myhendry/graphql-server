@@ -7,11 +7,30 @@ module.exports = {
       await sentimentAnalysis();
       return true;
     },
-    testPyMicroService: async () => {
-      const { data } = await axios.get(
-        "https://enigmatic-dusk-86110.herokuapp.com/hello"
+    testPyHelloService: async () => {
+      const { data } = await axios.post(
+        "https://hendry-python-server.herokuapp.com/hello",
+        // "http://localhost:5000/hello",
+        {
+          list: ["you are stupid idiot", "you are cute"],
+          name: "Fred",
+          email: "Flintstone@gmail.com"
+        }
       );
       const res = data.msg;
+      return res;
+    },
+    testPyMicroService: async (_, { statement }) => {
+      const { data } = await axios.post(
+        "https://hendry-python-server.herokuapp.com/brain",
+        // "http://localhost:5000/brain",
+        {
+          list: [statement],
+          name: "Fred",
+          email: "Flintstone@gmail.com"
+        }
+      );
+      const res = data.sentiment;
       console.log("res: ", res);
       return res;
     }
