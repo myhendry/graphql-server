@@ -9,7 +9,7 @@ module.exports = {
     },
     testPyHelloService: async () => {
       const { data } = await axios.post(
-        "https://hl-python-server.herokuapp.com/hello",
+        "https://hendry-py-server.herokuapp.com/hello",
         // "http://localhost:5000/hello",
         {
           list: ["you are stupid idiot", "you are cute"],
@@ -24,7 +24,7 @@ module.exports = {
   Mutation: {
     askPySentiment: async (_, { statement }) => {
       const { data } = await axios.post(
-        "https://hl-python-server.herokuapp.com/brain",
+        "https://hendry-py-server.herokuapp.com/brain",
         // "http://localhost:5000/brain",
         {
           list: [statement],
