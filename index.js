@@ -3,7 +3,7 @@ const express = require("express");
 const {
   ApolloServer,
   PubSub,
-  AuthenticationError
+  AuthenticationError,
 } = require("apollo-server-express");
 const jwt = require("jsonwebtoken");
 const jwksClient = require("jwks-rsa");
@@ -30,11 +30,11 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const client = jwksClient({
-  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
 });
 
 function getKey(header, cb) {
-  client.getSigningKey(header.kid, function(err, key) {
+  client.getSigningKey(header.kid, function (err, key) {
     var signingKey = key.publicKey || key.rsaPublicKey;
     cb(null, signingKey);
   });
@@ -43,10 +43,10 @@ function getKey(header, cb) {
 const options = {
   audience: process.env.AUTH0_CLIENTID,
   issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-  algorithms: ["RS256"]
+  algorithms: ["RS256"],
 };
 
-const getUser = token => {
+const getUser = (token) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, getKey, options, (err, decoded) => {
       if (err) {
@@ -63,50 +63,51 @@ const server = new ApolloServer({
   introspection: true,
   playground: true,
   context: async ({ req, connection }) => {
+    // console.log("req.headers", req.headers);
     if (connection) {
       // check connection for metadata
       // console.log(connection);
       return {
         ...connection.context,
-        pubsub
+        pubsub,
       };
     } else {
       try {
         const token = req.headers.authorization || "";
 
         if (token) {
-          console.log("server token", token);
+          // console.log("server token", token);
           const authUser = getUser(token);
-          console.log("server authUser", authUser);
+          // console.log("server authUser", authUser);
           const authenticatedEmail = await authUser;
-          console.log("server auth email ", authenticatedEmail);
+          // console.log("server auth email ", authenticatedEmail);
           const { id: userId } = await findOrMakeUser(authenticatedEmail);
           return {
             loaders: {
-              user: new DataLoader(keys => loaders.user.batchUsers(keys))
+              user: new DataLoader((keys) => loaders.user.batchUsers(keys)),
             },
             pubsub,
             userId,
             Book,
             Task,
-            User
+            User,
           };
         }
 
         return {
           loaders: {
-            user: new DataLoader(keys => loaders.user.batchUsers(keys))
+            user: new DataLoader((keys) => loaders.user.batchUsers(keys)),
           },
           pubsub,
           Book,
           Task,
-          User
+          User,
         };
       } catch (error) {
         throw new AuthenticationError("Access Denied! Need to authenticate");
       }
     }
-  }
+  },
 });
 
 server.applyMiddleware({ app, cors: true });
